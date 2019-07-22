@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.koreate.dao.NoticeBoardDAO">
+	<insert id="register" parameterType="net.koreate.vo.NoticeBoardVO">
+		INSERT INTO port_tbl_board(n_title,n_content,n_writer,n_uno) 
+		VALUES(#{n_title},#{n_content},#{n_writer},#{n_uno})	
+	</insert>
+	
+	
+	
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">
+				WHERE n_title LIKE CONCAT('%',#{keyword},'%') 
+			</if>
+			<if test="searchType == 'c'.toString()">
+				WHERE n_content LIKE CONCAT('%',#{keyword},'%') 
+			</if>
+			<if test="searchType == 'w'.toString()">
+				WHERE n_writer LIKE CONCAT('%',#{keyword},'%') 
+			</if>
+			<if test="searchType == 'tc'.toString()">
+				WHERE n_title LIKE CONCAT('%',#{keyword},'%') 
+				OR n_content LIKE CONCAT('%',#{keyword},'%')
+			</if>
+			<if test="searchType == 'cw'.toString()">
+				WHERE n_writer LIKE CONCAT('%',#{keyword},'%') 
+				OR n_content LIKE CONCAT('%',#{keyword},'%')
+			</if>
+			<if test="searchType == 'tcw'.toString()">
+				WHERE n_title LIKE CONCAT('%',#{keyword},'%') 
+				OR n_content LIKE CONCAT('%',#{keyword},'%')
+				OR n_writer LIKE CONCAT('%',#{keyword},'%')
+			</if>
+		</if>
+	</sql>
+	
+	<select id="listPageCriteria" resultType="net.koreate.vo.NoticeBoardVO">
+		SELECT * FROM port_tbl_board 
+		<include refid="search"></include>	
+		ORDER BY n_bno DESC
+		limit #{pageStart}, #{perPageNum}
+	</select>
+	
+	<select id="listPageCount" resultType="int">
+		SELECT count(*) FROM port_tbl_board 
+		<include refid="search"></include>		
+	</select>
+	
+	<update id="updateCnt" parameterType="int">
+		UPDATE port_tbl_board SET n_viewcnt = n_viewcnt + 1 
+		WHERE n_bno = #{n_bno}
+	</update>
+	
+	<select id="readReply" parameterType="int" resultType="net.koreate.vo.NoticeBoardVO">
+		SELECT * FROM port_tbl_board WHERE n_bno = #{n_bno}
+	</select>
+	
+	<update id="delete" parameterType="int">
+		UPDATE port_tbl_board SET n_showboard = 'n' 
+		WHERE n_bno = #{n_bno} 
+	</update>
+	
+	<insert id="replyRegister" parameterType="net.koreate.vo.NoticeBoardVO">
+		INSERT INTO port_tbl_board(n_title,n_content,n_writer,n_origin,n_depth)  
+		VALUES(#{n_title},#{n_content},#{n_writer},#{n_origin},#{n_depth})
+	</insert>
+	
+	<update id="update" parameterType="net.koreate.vo.NoticeBoardVO">
+		UPDATE port_tbl_board SET n_title = #{n_title}, n_content = #{n_content}, n_writer = #{n_writer}, n_updatedate = now() 
+		WHERE n_bno = #{n_bno}		
+	</update>
+	
+	<select id="listAll" resultType="net.koreate.vo.NoticeBoardVO">
+		SELECT * FROM port_tbl_board 
+		<include refid="search"></include>
+		ORDER BY n_bno DESC
+	</select>
+</mapper>
+
