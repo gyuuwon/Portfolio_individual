@@ -56,7 +56,7 @@
 						
 				<nav>
 				<ul class="gnb clear">
-					<li><a href="javascript:;" class="openAll1">여행정보</a>
+					<li><a href="javascript:;" class="openAll1">회사소개</a>
 
                         <div class="gnb_depth gnb_depth2_1">
                             <ul class="submenu_list">
